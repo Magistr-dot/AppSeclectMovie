@@ -11,7 +11,6 @@ import com.frigate.appselectmovie.R
 @SuppressLint("CustomSplashScreen")
 class SimpleSplashActivity : AppCompatActivity() {
 
-
     companion object {
         const val SPLASH_TIME_OUT: Long = 3000
     }
@@ -25,5 +24,4 @@ class SimpleSplashActivity : AppCompatActivity() {
             finish()
         }, SPLASH_TIME_OUT)
     }
-
 }
