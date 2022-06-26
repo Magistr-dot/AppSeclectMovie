@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.frigate.appselectmovie.databinding.ActivityMainBinding
+import com.frigate.appselectmovie.domain.MovieUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.Main) {
             view.getMovieListFromVM(offset).observe(this@MainActivity) {
-                adapter.list = it
+                adapter.list = it as MutableList<MovieUnit>
             }
         }
     }
