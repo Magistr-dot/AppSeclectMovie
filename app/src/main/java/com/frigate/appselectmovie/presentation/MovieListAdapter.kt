@@ -3,17 +3,17 @@ package com.frigate.appselectmovie.presentation
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.frigate.appselectmovie.R
-import com.frigate.appselectmovie.databinding.ActivityMainBinding
 import com.frigate.appselectmovie.databinding.ItemLayoutBinding
 import com.frigate.appselectmovie.domain.MovieUnit
 
 class MovieListAdapter : RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHolder>() {
-    private lateinit var bindding: ItemLayoutBinding
+    private lateinit var binding: ItemLayoutBinding
+    var isLoading = false
+    var loadMore : MyLoader? = null
+
+
 
     var list = mutableListOf<MovieUnit>()
         set(value) {
@@ -32,21 +32,42 @@ class MovieListAdapter : RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHold
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieUnitViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        bindding = ItemLayoutBinding.inflate(inflater, parent, false)
-        return MovieUnitViewHolder(bindding.root, bindding)
+        binding = ItemLayoutBinding.inflate(inflater, parent, false)
+        return MovieUnitViewHolder(binding.root, binding)
     }
 
     override fun onBindViewHolder(holder: MovieUnitViewHolder, position: Int) {
         holder.bind(list[position])
-        updateAdapter(list)
-
     }
 
     override fun getItemCount(): Int {
         return list.size
     }
 
-    fun updateAdapter(list: List<MovieUnit>) {
+    fun updateAdapter(list: MutableList<MovieUnit>) {
+        list.clear()
+        list.addAll(list)
+        notifyDataSetChanged()
+    }
 
+
+
+    fun loadProcess(loadMore: MyLoader?) {
+        this.loadMore = loadMore
+    }
+
+    fun startLoading() {
+        isLoading = true
+    }
+
+    fun setLoaded() {
+        isLoading = false
+    }
+
+    interface MyLoader {
+        fun onLoadMore()
+    }
+    fun fillAdapter(){
+        if (list.isNotEmpty()) updateAdapter(list)
     }
 }
