@@ -13,7 +13,7 @@ class MovieListAdapter :
     RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHolder>() {
 
     private lateinit var binding: ItemLayoutBinding
-    var listMovies = mutableListOf<MovieUnit>()
+    private var listMovies = mutableListOf<MovieUnit>()
     set(value) {
         val callback = MovieListDiff(listMovies,value)
         val diffResult = DiffUtil.calculateDiff(callback)

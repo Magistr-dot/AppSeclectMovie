@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-    lateinit var view: MainViewModel
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var view: MainViewModel
     lateinit var adapter: MovieListAdapter
     lateinit var layoutManager: LinearLayoutManager
 
