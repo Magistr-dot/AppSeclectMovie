@@ -13,13 +13,11 @@ import retrofit2.awaitResponse
 
 object MovieListRepositoryImpl : MovieListRepo {
     private const val KEY = "PhHi4horYcyh3nMJMyMlRtu5A9560kom"
-    private const val OFFSET = 1
 
-
-    private val movieListLD = MutableLiveData<List<MovieUnit>>()
+    private val movieListLD = MutableLiveData<MutableList<MovieUnit>>()
     private val movieList = mutableListOf<MovieUnit>()
 
-    override suspend fun getMovieList(offset:Int): LiveData<List<MovieUnit>> {
+    override suspend fun getMovieList(offset:Int): LiveData<MutableList<MovieUnit>> {
         val response = Common.retrofitService.allReviews(KEY, offset).awaitResponse()
         GlobalScope.launch(Dispatchers.IO) {
             if (response.isSuccessful) {
@@ -32,7 +30,7 @@ object MovieListRepositoryImpl : MovieListRepo {
     }
 
     private fun update() {
-        movieListLD.postValue(movieList.toList())
+        movieListLD.postValue(movieList)
     }
 
     private fun mapper(data: ParseResult) {

@@ -7,9 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.frigate.appselectmovie.databinding.ActivityMainBinding
-import com.frigate.appselectmovie.domain.MovieUnit
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
@@ -18,64 +16,59 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     lateinit var view: MainViewModel
     lateinit var adapter: MovieListAdapter
+    lateinit var layoutManager: LinearLayoutManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         var offset = 0
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         view = ViewModelProvider(this).get(MainViewModel::class.java)
         setupRecyclerView()
+
         lifecycleScope.launch {
-            fillAdapter(offset)
-        }
-        binding.buttonAddShopItem.setOnClickListener {
-            offset += 20
-            lifecycleScope.launch {
-                setupRecyclerView()
-            }
+            fillAdapter(adapter, offset)
         }
 
-        val layoutManager = binding.movieList.layoutManager as LinearLayoutManager
-        binding.movieList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+        layoutManager = binding.movieList.layoutManager as LinearLayoutManager
+
+        binding.movieList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 val totalItem = layoutManager.itemCount
                 val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-                if(!adapter.isLoading && totalItem <=
-                        lastVisiblePosition + 10) {
+                if (!adapter.isLoading && totalItem <=
+                    lastVisiblePosition + 10
+                ) {
                     adapter.loadMore?.onLoadMore()
                 }
             }
         })
-        adapter.loadProcess (object : MovieListAdapter.MyLoader {
+        adapter.loadProcess(object : MovieListAdapter.MyLoader {
             override fun onLoadMore() {
-                offset += 20
                 lifecycleScope.launch {
-                    fillAdapter(offset)
+                    offset += 20
+                    fillAdapter(adapter, offset)
                 }
             }
         })
     }
 
     private fun setupRecyclerView() {
-        adapter = MovieListAdapter()
+        adapter = MovieListAdapter(mutableListOf())
         binding.movieList.adapter = adapter
     }
 
-    fun fillAdapter(offset: Int) {
-        GlobalScope.launch(Dispatchers.Main) {
+    fun fillAdapter(adapter: MovieListAdapter, offset: Int) {
+        lifecycleScope.launch(Dispatchers.Main) {
             view.getMovieListFromVM(offset).observe(this@MainActivity) {
-                adapter.list = it as MutableList<MovieUnit>
+                adapter.fillAdapter(it)
             }
         }
     }
-
-
 }
 

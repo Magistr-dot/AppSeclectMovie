@@ -12,8 +12,7 @@ class MainViewModel : ViewModel() {
 
     private val getMovieListUseCase = GetMovieListUseCase(repository)
 
-    suspend fun getMovieListFromVM(offset:Int): LiveData<List<MovieUnit>> {
+    suspend fun getMovieListFromVM(offset: Int): LiveData<MutableList<MovieUnit>> {
         return getMovieListUseCase.getMovieList(offset)
-
     }
 }

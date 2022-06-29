@@ -8,18 +8,13 @@ import com.bumptech.glide.Glide
 import com.frigate.appselectmovie.databinding.ItemLayoutBinding
 import com.frigate.appselectmovie.domain.MovieUnit
 
-class MovieListAdapter : RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHolder>() {
+class MovieListAdapter(private var listMovies: MutableList<MovieUnit>) :
+    RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHolder>() {
+
     private lateinit var binding: ItemLayoutBinding
+
     var isLoading = false
-    var loadMore : MyLoader? = null
-
-
-
-    var list = mutableListOf<MovieUnit>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
+    var loadMore: MyLoader? = null
 
     class MovieUnitViewHolder(private val view: View, private val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(view) {
@@ -37,37 +32,38 @@ class MovieListAdapter : RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHold
     }
 
     override fun onBindViewHolder(holder: MovieUnitViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.bind(listMovies[position])
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return listMovies.size
     }
 
-    fun updateAdapter(list: MutableList<MovieUnit>) {
-        list.clear()
-        list.addAll(list)
+    private fun updateAdapter() {
         notifyDataSetChanged()
     }
-
 
 
     fun loadProcess(loadMore: MyLoader?) {
         this.loadMore = loadMore
     }
 
-    fun startLoading() {
+    private fun startLoading() {
         isLoading = true
     }
 
-    fun setLoaded() {
+    private fun endLoaded() {
         isLoading = false
     }
 
     interface MyLoader {
         fun onLoadMore()
     }
-    fun fillAdapter(){
-        if (list.isNotEmpty()) updateAdapter(list)
+
+    fun fillAdapter(listFromForm: MutableList<MovieUnit>) {
+        startLoading()
+        listMovies = listFromForm
+        if (listMovies.isNotEmpty()) updateAdapter()
+        endLoaded()
     }
 }
