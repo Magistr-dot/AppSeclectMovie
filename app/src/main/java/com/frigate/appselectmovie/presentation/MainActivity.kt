@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = MovieListAdapter(mutableListOf())
+        adapter = MovieListAdapter()
         binding.movieList.adapter = adapter
     }
 

@@ -3,18 +3,27 @@ package com.frigate.appselectmovie.presentation
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.frigate.appselectmovie.databinding.ItemLayoutBinding
 import com.frigate.appselectmovie.domain.MovieUnit
 
-class MovieListAdapter(private var listMovies: MutableList<MovieUnit>) :
+class MovieListAdapter :
     RecyclerView.Adapter<MovieListAdapter.MovieUnitViewHolder>() {
 
     private lateinit var binding: ItemLayoutBinding
-
+    var listMovies = mutableListOf<MovieUnit>()
+    set(value) {
+        val callback = MovieListDiff(listMovies,value)
+        val diffResult = DiffUtil.calculateDiff(callback)
+        diffResult.dispatchUpdatesTo(this)
+        field = value
+    }
     var isLoading = false
     var loadMore: MyLoader? = null
+
+
 
     class MovieUnitViewHolder(private val view: View, private val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(view) {
@@ -39,11 +48,6 @@ class MovieListAdapter(private var listMovies: MutableList<MovieUnit>) :
         return listMovies.size
     }
 
-    private fun updateAdapter() {
-        notifyDataSetChanged()
-    }
-
-
     fun loadProcess(loadMore: MyLoader?) {
         this.loadMore = loadMore
     }
@@ -63,7 +67,6 @@ class MovieListAdapter(private var listMovies: MutableList<MovieUnit>) :
     fun fillAdapter(listFromForm: MutableList<MovieUnit>) {
         startLoading()
         listMovies = listFromForm
-        if (listMovies.isNotEmpty()) updateAdapter()
         endLoaded()
     }
 }
